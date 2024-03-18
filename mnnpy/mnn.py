@@ -12,7 +12,7 @@ from .utils import adjust_shift_variance
 def mnn_correct(*datas, var_index=None, var_subset=None, batch_key='batch', index_unique='-',
                 batch_categories=None, k=20, sigma=1., cos_norm_in=True, cos_norm_out=True,
                 svd_dim=None, var_adj=True, compute_angle=False, mnn_order=None, svd_mode='rsvd',
-                do_concatenate=True, save_raw=False, n_jobs=None, **kwargs):
+                do_concatenate=True, save_raw=False, workers=None, **kwargs):
     """
     Apply MNN correct to input data matrices or AnnData objects. Depending on do_concatenate,
     returns matrices or AnnData objects in the original order containing corrected expression
@@ -85,7 +85,7 @@ def mnn_correct(*datas, var_index=None, var_subset=None, batch_key='batch', inde
     :param save_raw: `bool`, optional (default: False)
         Whether to save the original expression data in the .raw attribute of AnnData objects.
 
-    :param n_jobs: `int` or `None`, optional (default: None)
+    :param workers: `int` or `None`, optional (default: None)
         The number of jobs. When set to None, automatically uses the number of cores.
 
     :param kwargs: `dict` or `None`, optional (default: None)
@@ -142,8 +142,8 @@ def mnn_correct(*datas, var_index=None, var_subset=None, batch_key='batch', inde
             print('Done.')
             return datas, corrected[1], corrected[2]
     # ------------------------------------------------------------
-    if n_jobs is None:
-        n_jobs = cpu_count()
+    if workers is None:
+        workers = cpu_count()
     n_cols = datas[0].shape[1]
     if len(var_index) != n_cols:
         raise ValueError('The number of vars is not equal to the length of var_index.')
@@ -154,7 +154,7 @@ def mnn_correct(*datas, var_index=None, var_subset=None, batch_key='batch', inde
     print('Performing cosine normalization...')
     in_batches, out_batches, var_subset, same_set = transform_input_data(datas, cos_norm_in,
                                                                          cos_norm_out, var_index,
-                                                                         var_subset, n_jobs)
+                                                                         var_subset, workers)
     if mnn_order is None:
         mnn_order = list(range(n_batch))
     ref = mnn_order[0]
@@ -176,7 +176,7 @@ def mnn_correct(*datas, var_index=None, var_subset=None, batch_key='batch', inde
             new_batch_out = out_batches[target]
         print('  Looking for MNNs...')
         mnn_ref, mnn_new = find_mutual_nn(data1=ref_batch_in, data2=new_batch_in, k1=k, k2=k,
-                                          n_jobs=n_jobs)
+                                          workers=workers)
         print('  Computing correction vectors...')
         correction_in = compute_correction(ref_batch_in, new_batch_in, mnn_ref, mnn_new,
                                            new_batch_in, sigma)
@@ -188,7 +188,7 @@ def mnn_correct(*datas, var_index=None, var_subset=None, batch_key='batch', inde
             ref_centred = ref_batch_in - np.mean(ref_batch_in, axis=0)
             ref_basis = svd_internal(ref_centred.T, nu=2, svd_mode=svd_mode, **kwargs)
             find_subspace_job = partial(find_shared_subspace, mat1=ref_basis, mat2_vec=True)
-            with Pool(n_jobs) as p_n:
+            with Pool(workers) as p_n:
                 angle_out = p_n.map(find_subspace_job, correction_in)
             angle_container.append(angle_out)
         # ------------------------
@@ -212,10 +212,10 @@ def mnn_correct(*datas, var_index=None, var_subset=None, batch_key='batch', inde
         if var_adj:
             print('  Adjusting variance...')
             correction_in = adjust_shift_variance(ref_batch_in, new_batch_in, correction_in, sigma,
-                                                  n_jobs)
+                                                  workers)
             if not same_set:
                 correction_out = adjust_shift_variance(ref_batch_out, new_batch_out, correction_out,
-                                                       sigma, n_jobs, var_subset)
+                                                       sigma, workers, var_subset)
         # ------------------------
         print('  Applying correction...')
         new_batch_in = new_batch_in + correction_in

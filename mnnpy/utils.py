@@ -31,7 +31,7 @@ def kdist(m, n):
     return dist
 
 
-def transform_input_data(datas, cos_norm_in, cos_norm_out, var_index, var_subset, n_jobs):
+def transform_input_data(datas, cos_norm_in, cos_norm_out, var_index, var_subset, workers):
     datas = [data.toarray().astype(np.float32) if issparse(data) else data.astype(np.float32) for data in datas]
     if var_index is None:
         raise ValueError('Argument var_index not provideed.')
@@ -51,33 +51,33 @@ def transform_input_data(datas, cos_norm_in, cos_norm_out, var_index, var_subset
         var_sub_index = None
         in_batches = datas
     if settings.normalization == 'parallel':
-        with Pool(n_jobs) as p_n:
+        with Pool(workers) as p_n:
             in_scaling = p_n.map(l2_norm, in_batches)
     else:
         in_scaling = [l2_norm(b) for b in in_batches]
     in_scaling = [scaling[:, None] for scaling in in_scaling]
     if cos_norm_in:
         if settings.normalization == 'parallel':
-            with Pool(n_jobs) as p_n:
+            with Pool(workers) as p_n:
                 in_batches = p_n.starmap(scale_rows, zip(in_batches, in_scaling))
         else:
             in_batches = [scale_rows(a,b) for (a,b) in zip(in_batches, in_scaling)]
     if cos_norm_out:
         if not cos_norm_in:
             if settings.normalization == 'parallel':
-                with Pool(n_jobs) as p_n:
+                with Pool(workers) as p_n:
                     out_batches = p_n.starmap(scale_rows, zip(datas, in_scaling))
             else:
                 out_batches = [scale_rows(a,b) for (a,b) in zip(datas, in_scaling)]
         else:
             if settings.normalization == 'parallel':
-                with Pool(n_jobs) as p_n:
+                with Pool(workers) as p_n:
                     out_scaling = p_n.map(l2_norm, datas)
             else:
                 out_scaling = [l2_norm(d) for d in datas]
             out_scaling = [scaling[:, None] for scaling in out_scaling]
             if settings.normalization == 'parallel':
-                with Pool(n_jobs) as p_n:
+                with Pool(workers) as p_n:
                     out_batches = p_n.starmap(scale_rows, zip(datas, out_scaling))
             else:
                 out_batches = [scale_rows(a,b) for (a,b) in zip(datas, out_scaling)]
@@ -88,9 +88,9 @@ def transform_input_data(datas, cos_norm_in, cos_norm_out, var_index, var_subset
 
 # forceobj=True due to: Untyped global name 'cKDTree': cannot determine Numba type of <class 'type'>
 @jit((float32[:, :], float32[:, :], int8, int8, int8), forceobj=True)
-def find_mutual_nn(data1, data2, k1, k2, n_jobs):
-    k_index_1 = cKDTree(data1).query(x=data2, k=k1, workers=n_jobs)[1]
-    k_index_2 = cKDTree(data2).query(x=data1, k=k2, workers=n_jobs)[1]
+def find_mutual_nn(data1, data2, k1, k2, workers):
+    k_index_1 = cKDTree(data1).query(x=data2, k=k1, workers=workers)[1]
+    k_index_2 = cKDTree(data2).query(x=data1, k=k2, workers=workers)[1]
     mutual_1 = []
     mutual_2 = []
     for index_2 in range(data2.shape[0]):
@@ -185,16 +185,16 @@ def subtract_bio(*spans, correction, var_subset=None):
     return correction
 
 
-def adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):
+def adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):
     if var_subset is not None:
         vect = correction[:, var_subset]
         data1 = data1[:, var_subset]
         data2 = data2[:, var_subset]
     else:
         vect = correction
-    with Pool(n_jobs) as p_n:
+    with Pool(workers) as p_n:
         scaling = p_n.starmap(adjust_v_worker(data1, data2, sigma), zip(data2, vect), 
-                              chunksize=int(data2.shape[0]/n_jobs) + 1)
+                              chunksize=int(data2.shape[0]/workers) + 1)
     scaling = np.fmax(scaling, 1).astype(np.float32)
     return correction * scaling[:, None]
 
