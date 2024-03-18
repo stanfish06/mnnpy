@@ -921,7 +921,7 @@ struct __pyx_opt_args_5mnnpy_6_utils__adjust_shift_variance;
 /* "mnnpy/_utils.pyx":89
  * @cython.boundscheck(False)  # Deactivate bounds checking
  * @cython.wraparound(False)   # Deactivate negative indexing.
- * cpdef _adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):             # <<<<<<<<<<<<<<
+ * cpdef _adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):             # <<<<<<<<<<<<<<
  *     if var_subset is not None:
  *         vect = correction[:, var_subset]
  */
@@ -1717,7 +1717,7 @@ static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_encode[] = "encode";
 static const char __pyx_k_format[] = "format";
 static const char __pyx_k_import[] = "__import__";
-static const char __pyx_k_n_jobs[] = "n_jobs";
+static const char __pyx_k_workers[] = "workers";
 static const char __pyx_k_name_2[] = "__name__";
 static const char __pyx_k_pickle[] = "pickle";
 static const char __pyx_k_reduce[] = "__reduce__";
@@ -1834,7 +1834,7 @@ static PyObject *__pyx_kp_s_itemsize_0_for_cython_array;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_mode;
-static PyObject *__pyx_n_s_n_jobs;
+static PyObject *__pyx_n_s_workers;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_n_s_ndim;
@@ -1877,7 +1877,7 @@ static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_var_subset;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_5mnnpy_6_utils__adjust_shift_variance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data1, PyObject *__pyx_v_data2, PyObject *__pyx_v_correction, PyObject *__pyx_v_sigma, PyObject *__pyx_v_n_jobs, PyObject *__pyx_v_var_subset); /* proto */
+static PyObject *__pyx_pf_5mnnpy_6_utils__adjust_shift_variance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data1, PyObject *__pyx_v_data2, PyObject *__pyx_v_correction, PyObject *__pyx_v_sigma, PyObject *__pyx_v_workers, PyObject *__pyx_v_var_subset); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -2779,13 +2779,13 @@ static float __pyx_f_5mnnpy_6_utils__adjust_s_variance(__Pyx_memviewslice __pyx_
 /* "mnnpy/_utils.pyx":89
  * @cython.boundscheck(False)  # Deactivate bounds checking
  * @cython.wraparound(False)   # Deactivate negative indexing.
- * cpdef _adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):             # <<<<<<<<<<<<<<
+ * cpdef _adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):             # <<<<<<<<<<<<<<
  *     if var_subset is not None:
  *         vect = correction[:, var_subset]
  */
 
 static PyObject *__pyx_pw_5mnnpy_6_utils_1_adjust_shift_variance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v_data1, PyObject *__pyx_v_data2, PyObject *__pyx_v_correction, PyObject *__pyx_v_sigma, PyObject *__pyx_v_n_jobs, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_5mnnpy_6_utils__adjust_shift_variance *__pyx_optional_args) {
+static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v_data1, PyObject *__pyx_v_data2, PyObject *__pyx_v_correction, PyObject *__pyx_v_sigma, PyObject *__pyx_v_workers, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_5mnnpy_6_utils__adjust_shift_variance *__pyx_optional_args) {
   PyObject *__pyx_v_var_subset = ((PyObject *)Py_None);
   PyObject *__pyx_v_vect = NULL;
   __Pyx_memviewslice __pyx_v_da1 = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -2826,7 +2826,7 @@ static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v
 
   /* "mnnpy/_utils.pyx":90
  * @cython.wraparound(False)   # Deactivate negative indexing.
- * cpdef _adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):
+ * cpdef _adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):
  *     if var_subset is not None:             # <<<<<<<<<<<<<<
  *         vect = correction[:, var_subset]
  *         data1 = data1[:, var_subset]
@@ -2836,7 +2836,7 @@ static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v
   if (__pyx_t_2) {
 
     /* "mnnpy/_utils.pyx":91
- * cpdef _adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):
+ * cpdef _adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):
  *     if var_subset is not None:
  *         vect = correction[:, var_subset]             # <<<<<<<<<<<<<<
  *         data1 = data1[:, var_subset]
@@ -2900,7 +2900,7 @@ static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v
 
     /* "mnnpy/_utils.pyx":90
  * @cython.wraparound(False)   # Deactivate negative indexing.
- * cpdef _adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):
+ * cpdef _adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):
  *     if var_subset is not None:             # <<<<<<<<<<<<<<
  *         vect = correction[:, var_subset]
  *         data1 = data1[:, var_subset]
@@ -3022,7 +3022,7 @@ static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v
  *     cdef float s2 = sigma
  *     cdef Py_ssize_t i
  *     cdef Py_ssize_t n_c2  = data2.shape[0]             # <<<<<<<<<<<<<<
- *     cdef int chunksize=int(n_c2/n_jobs) + 1
+ *     cdef int chunksize=int(n_c2/workers) + 1
  *     for i in prange(n_c2, nogil=True, chunksize=chunksize, schedule='static'):
  */
   __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_data2, __pyx_n_s_shape); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 103, __pyx_L1_error)
@@ -3037,13 +3037,13 @@ static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v
   /* "mnnpy/_utils.pyx":104
  *     cdef Py_ssize_t i
  *     cdef Py_ssize_t n_c2  = data2.shape[0]
- *     cdef int chunksize=int(n_c2/n_jobs) + 1             # <<<<<<<<<<<<<<
+ *     cdef int chunksize=int(n_c2/workers) + 1             # <<<<<<<<<<<<<<
  *     for i in prange(n_c2, nogil=True, chunksize=chunksize, schedule='static'):
  *         s1[i] = _adjust_s_variance(da1, da2, da2[i], vec[i], s2)
  */
   __pyx_t_6 = PyInt_FromSsize_t(__pyx_v_n_c2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_8 = __Pyx_PyNumber_Divide(__pyx_t_6, __pyx_v_n_jobs); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyNumber_Divide(__pyx_t_6, __pyx_v_workers); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_6 = __Pyx_PyNumber_Int(__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 104, __pyx_L1_error)
@@ -3058,7 +3058,7 @@ static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v
 
   /* "mnnpy/_utils.pyx":105
  *     cdef Py_ssize_t n_c2  = data2.shape[0]
- *     cdef int chunksize=int(n_c2/n_jobs) + 1
+ *     cdef int chunksize=int(n_c2/workers) + 1
  *     for i in prange(n_c2, nogil=True, chunksize=chunksize, schedule='static'):             # <<<<<<<<<<<<<<
  *         s1[i] = _adjust_s_variance(da1, da2, da2[i], vec[i], s2)
  *     scaling = np.fmax(scaling, 1)
@@ -3107,7 +3107,7 @@ static PyObject *__pyx_f_5mnnpy_6_utils__adjust_shift_variance(PyObject *__pyx_v
                             __pyx_v_i = (Py_ssize_t)(0 + 1 * __pyx_t_13);
 
                             /* "mnnpy/_utils.pyx":106
- *     cdef int chunksize=int(n_c2/n_jobs) + 1
+ *     cdef int chunksize=int(n_c2/workers) + 1
  *     for i in prange(n_c2, nogil=True, chunksize=chunksize, schedule='static'):
  *         s1[i] = _adjust_s_variance(da1, da2, da2[i], vec[i], s2)             # <<<<<<<<<<<<<<
  *     scaling = np.fmax(scaling, 1)
@@ -3258,7 +3258,7 @@ __pyx_t_16 = __pyx_v_i;
 
       /* "mnnpy/_utils.pyx":105
  *     cdef Py_ssize_t n_c2  = data2.shape[0]
- *     cdef int chunksize=int(n_c2/n_jobs) + 1
+ *     cdef int chunksize=int(n_c2/workers) + 1
  *     for i in prange(n_c2, nogil=True, chunksize=chunksize, schedule='static'):             # <<<<<<<<<<<<<<
  *         s1[i] = _adjust_s_variance(da1, da2, da2[i], vec[i], s2)
  *     scaling = np.fmax(scaling, 1)
@@ -3359,7 +3359,7 @@ __pyx_t_16 = __pyx_v_i;
   /* "mnnpy/_utils.pyx":89
  * @cython.boundscheck(False)  # Deactivate bounds checking
  * @cython.wraparound(False)   # Deactivate negative indexing.
- * cpdef _adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):             # <<<<<<<<<<<<<<
+ * cpdef _adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):             # <<<<<<<<<<<<<<
  *     if var_subset is not None:
  *         vect = correction[:, var_subset]
  */
@@ -3397,13 +3397,13 @@ static PyObject *__pyx_pw_5mnnpy_6_utils_1_adjust_shift_variance(PyObject *__pyx
   PyObject *__pyx_v_data2 = 0;
   PyObject *__pyx_v_correction = 0;
   PyObject *__pyx_v_sigma = 0;
-  PyObject *__pyx_v_n_jobs = 0;
+  PyObject *__pyx_v_workers = 0;
   PyObject *__pyx_v_var_subset = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("_adjust_shift_variance (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_data1,&__pyx_n_s_data2,&__pyx_n_s_correction,&__pyx_n_s_sigma,&__pyx_n_s_n_jobs,&__pyx_n_s_var_subset,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_data1,&__pyx_n_s_data2,&__pyx_n_s_correction,&__pyx_n_s_sigma,&__pyx_n_s_workers,&__pyx_n_s_var_subset,0};
     PyObject* values[6] = {0,0,0,0,0,0};
     values[5] = ((PyObject *)Py_None);
     if (unlikely(__pyx_kwds)) {
@@ -3450,7 +3450,7 @@ static PyObject *__pyx_pw_5mnnpy_6_utils_1_adjust_shift_variance(PyObject *__pyx
         }
         CYTHON_FALLTHROUGH;
         case  4:
-        if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_jobs)) != 0)) kw_args--;
+        if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_workers)) != 0)) kw_args--;
         else {
           __Pyx_RaiseArgtupleInvalid("_adjust_shift_variance", 0, 5, 6, 4); __PYX_ERR(0, 89, __pyx_L3_error)
         }
@@ -3481,7 +3481,7 @@ static PyObject *__pyx_pw_5mnnpy_6_utils_1_adjust_shift_variance(PyObject *__pyx
     __pyx_v_data2 = values[1];
     __pyx_v_correction = values[2];
     __pyx_v_sigma = values[3];
-    __pyx_v_n_jobs = values[4];
+    __pyx_v_workers = values[4];
     __pyx_v_var_subset = values[5];
   }
   goto __pyx_L4_argument_unpacking_done;
@@ -3492,14 +3492,14 @@ static PyObject *__pyx_pw_5mnnpy_6_utils_1_adjust_shift_variance(PyObject *__pyx
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_5mnnpy_6_utils__adjust_shift_variance(__pyx_self, __pyx_v_data1, __pyx_v_data2, __pyx_v_correction, __pyx_v_sigma, __pyx_v_n_jobs, __pyx_v_var_subset);
+  __pyx_r = __pyx_pf_5mnnpy_6_utils__adjust_shift_variance(__pyx_self, __pyx_v_data1, __pyx_v_data2, __pyx_v_correction, __pyx_v_sigma, __pyx_v_workers, __pyx_v_var_subset);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5mnnpy_6_utils__adjust_shift_variance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data1, PyObject *__pyx_v_data2, PyObject *__pyx_v_correction, PyObject *__pyx_v_sigma, PyObject *__pyx_v_n_jobs, PyObject *__pyx_v_var_subset) {
+static PyObject *__pyx_pf_5mnnpy_6_utils__adjust_shift_variance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data1, PyObject *__pyx_v_data2, PyObject *__pyx_v_correction, PyObject *__pyx_v_sigma, PyObject *__pyx_v_workers, PyObject *__pyx_v_var_subset) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3508,7 +3508,7 @@ static PyObject *__pyx_pf_5mnnpy_6_utils__adjust_shift_variance(CYTHON_UNUSED Py
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2.__pyx_n = 1;
   __pyx_t_2.var_subset = __pyx_v_var_subset;
-  __pyx_t_1 = __pyx_f_5mnnpy_6_utils__adjust_shift_variance(__pyx_v_data1, __pyx_v_data2, __pyx_v_correction, __pyx_v_sigma, __pyx_v_n_jobs, 0, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5mnnpy_6_utils__adjust_shift_variance(__pyx_v_data1, __pyx_v_data2, __pyx_v_correction, __pyx_v_sigma, __pyx_v_workers, 0, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -17205,7 +17205,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
-  {&__pyx_n_s_n_jobs, __pyx_k_n_jobs, sizeof(__pyx_k_n_jobs), 0, 0, 1, 1},
+  {&__pyx_n_s_workers, __pyx_k_workers, sizeof(__pyx_k_workers), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
   {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
@@ -17269,7 +17269,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
   /* "mnnpy/_utils.pyx":91
- * cpdef _adjust_shift_variance(data1, data2, correction, sigma, n_jobs, var_subset=None):
+ * cpdef _adjust_shift_variance(data1, data2, correction, sigma, workers, var_subset=None):
  *     if var_subset is not None:
  *         vect = correction[:, var_subset]             # <<<<<<<<<<<<<<
  *         data1 = data1[:, var_subset]
